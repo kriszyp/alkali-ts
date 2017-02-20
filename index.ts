@@ -1,73 +1,56 @@
 /// <reference path="./node_modules/alkali/typings.d.ts" />
 import 'reflect-metadata'
 import { reactive } from 'alkali/extensions/typescript'
-import { Variable, VArray, VString, Div, react, Label, Input } from 'alkali'
+import { Variable, VArray, VString, VNumber, Div, react, Label, Input } from 'alkali'
 
 
 //function Foo(props: Variable) { }
 
 // Fails type checking
 //let f = new Foo(new Variable([1, 4, 5]))
-let A = Variable.with({
+const Address = Variable.with({
   street: VString,
-  state: VString
+  state: VString,
+  zip: VNumber
 })
-class Address2 extends A {
-  another: string
-}
-let a = new Address2()
-let v = new Variable<Date>()
-let v2 = new Variable()
-console.log(v.valueOf().getTime())
-console.log(a.state.put('hi'), a.another + a.street)
-class Address extends Variable<{}> {
-  @reactive street: string
-  @reactive state: string
-}
-const Addresses = (VArray.of(Address))
-class MyClass {
-  firstName = new VString('John')
-  @reactive lastName: string = 'Doe'
+class Person extends Variable.with({
+  firstName: VString,
+  lastName: VString,
+  age: VNumber,
+  address: Address,
+  otherAddresses: VArray.of(Address)
+}) {
   fullName = react(function*() {
     return `${yield this.firstName} ${yield this.lastName}`
   }.bind(this))
-  @reactive age: number
-  address = new Address()
-  otherAddresses = new Addresses([{state: 'ID'}])
 }
 
 
-let mc = new MyClass()
-/*let v = new Variable('s')
-let MyVar = Variable({foo: Variable})
-v.put('hi')
-let mv = new MyVar()
-mv.foo.put(33)
-mv.foo.valueOf()*/
+let newPerson = new Person()
 let test = Div('.test', document.createTextNode('hi'))
 document.body.appendChild(new Div([
   Div([
     Label([
       'First Name: ',
-      Input(mc.firstName)
+      Input(newPerson.firstName)
     ]),
     Label([
       ' Last Name: ',
-      Input(mc.lastName)
+      Input(newPerson.lastName)
     ])
   ]),
-  Div(['Full Name: ', mc.fullName]),
-  Div(['Age: ', mc.age]),
-  Div(['From: ', mc.address.state]),
+  Div(['Full Name: ', newPerson.fullName]),
+  Div(['Age: ', newPerson.age]),
+  Div(['From: ', newPerson.address.state]),
   Div(['Other addresses: ',
-    Div(mc.otherAddresses.map(address =>
+    Div(newPerson.otherAddresses.map(address =>
       Div(['state: ', address.state]))),
-    Div(mc.otherAddresses.map(address =>
+    Div(newPerson.otherAddresses.map(address =>
       Input(address.state)))
   ])
 ]))
 
-mc.lastName = 'Smith'
-mc.age = 39
-mc.address.state = 'UT'
-mc.otherAddresses.push({state: 'OR'})
+newPerson.lastName.put('Smith')
+newPerson.age.put(39)
+newPerson.address.state.put('UT')
+newPerson.otherAddresses.push({state: 'OR'})
