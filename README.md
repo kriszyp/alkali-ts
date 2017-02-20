@@ -24,3 +24,7 @@ And then any assignments to the reactive properties cause reactive updates in th
 mc.name = 'New Name'
 mc.age = 23
 ```
+
+### Installation
+`npm install`
+`npm run build`

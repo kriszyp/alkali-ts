@@ -1,37 +1,43 @@
 /// <reference path="./node_modules/alkali/typings.d.ts" />
 import 'reflect-metadata'
-import { Variable, Div } from 'alkali'
+import { reactive } from 'alkali/extensions/typescript'
+import { Variable, VArray, VString, Div, react, Label, Input } from 'alkali'
 
-function reactive(target: any, key: string) {
-  let Type = Reflect.getMetadata('design:type', target, key)
-  console.log(Type)
-  Object.defineProperty(target, key, {
-    get: function() {
-      var property = (this._properties || (this._properties = {}))[key]
-      if (!property) {
-        this._properties[key] = property = new Variable()
-        property.key = key
-        property.parent = this
-      }
-      return property
-    },
-    set: function(value) {
-      this[key]._changeValue(null, 4, value)
-    },
-    enumerable: true,
-    configurable: true
-  })
-}
 
-class MyClass extends Variable {
-  @reactive
-  name: string
-  @reactive
-  age: number
-}
-let mc = new MyClass({
-  name: 'John'
+//function Foo(props: Variable) { }
+
+// Fails type checking
+//let f = new Foo(new Variable([1, 4, 5]))
+let A = Variable.with({
+  street: VString,
+  state: VString
 })
+class Address2 extends A {
+  another: string
+}
+let a = new Address2()
+let v = new Variable<Date>()
+let v2 = new Variable()
+console.log(v.valueOf().getTime())
+console.log(a.state.put('hi'), a.another + a.street)
+class Address extends Variable<{}> {
+  @reactive street: string
+  @reactive state: string
+}
+const Addresses = (VArray.of(Address))
+class MyClass {
+  firstName = new VString('John')
+  @reactive lastName: string = 'Doe'
+  fullName = react(function*() {
+    return `${yield this.firstName} ${yield this.lastName}`
+  }.bind(this))
+  @reactive age: number
+  address = new Address()
+  otherAddresses = new Addresses([{state: 'ID'}])
+}
+
+
+let mc = new MyClass()
 /*let v = new Variable('s')
 let MyVar = Variable({foo: Variable})
 v.put('hi')
@@ -40,9 +46,28 @@ mv.foo.put(33)
 mv.foo.valueOf()*/
 let test = Div('.test', document.createTextNode('hi'))
 document.body.appendChild(new Div([
-  Div(['Name:', mc.name]),
-  Div(['Age:', mc.age])
+  Div([
+    Label([
+      'First Name: ',
+      Input(mc.firstName)
+    ]),
+    Label([
+      ' Last Name: ',
+      Input(mc.lastName)
+    ])
+  ]),
+  Div(['Full Name: ', mc.fullName]),
+  Div(['Age: ', mc.age]),
+  Div(['From: ', mc.address.state]),
+  Div(['Other addresses: ',
+    Div(mc.otherAddresses.map(address =>
+      Div(['state: ', address.state]))),
+    Div(mc.otherAddresses.map(address =>
+      Input(address.state)))
+  ])
 ]))
 
-mc.name = 'New Name'
-mc.age = 23
+mc.lastName = 'Smith'
+mc.age = 39
+mc.address.state = 'UT'
+mc.otherAddresses.push({state: 'OR'})
