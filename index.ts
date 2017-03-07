@@ -1,18 +1,13 @@
 /// <reference path="./node_modules/alkali/typings.d.ts" />
-import 'reflect-metadata'
-import { reactive } from 'alkali/extensions/typescript'
 import { Variable, VArray, VString, VNumber, Div, react, Label, Input } from 'alkali'
 
-
-//function Foo(props: Variable) { }
-
-// Fails type checking
-//let f = new Foo(new Variable([1, 4, 5]))
+// this defines a structured variable, and typescript understands the typing that it defines
 const Address = Variable.with({
   street: VString,
   state: VString,
   zip: VNumber
 })
+
 class Person extends Variable.with({
   firstName: VString,
   lastName: VString,
@@ -24,10 +19,15 @@ class Person extends Variable.with({
     return `${yield this.firstName} ${yield this.lastName}`
   }.bind(this))
 }
+const SpecialPerson = Person.with({
+  birthday: VNumber
+})
 
+let newPerson = new SpecialPerson()
 
-let newPerson = new Person()
+console.log(newPerson.fullName)
 let test = Div('.test', document.createTextNode('hi'))
+let p = new Person()
 document.body.appendChild(new Div([
   Div([
     Label([
@@ -50,6 +50,7 @@ document.body.appendChild(new Div([
   ])
 ]))
 
+newPerson.firstName.put('John')
 newPerson.lastName.put('Smith')
 newPerson.age.put(39)
 newPerson.address.state.put('UT')
