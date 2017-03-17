@@ -1,27 +1,12 @@
 /// <reference path="./node_modules/alkali/typings.d.ts" />
 import 'reflect-metadata'
-import { reactive } from 'alkali/extensions/typescript'
-import { Variable, VArray, VString, Div, react, Label, Input } from 'alkali'
+import { reactive, Variable, VArray, VString, Div, react, Label, Input } from 'alkali'
 
 
 //function Foo(props: Variable) { }
 
-// Fails type checking
-//let f = new Foo(new Variable([1, 4, 5]))
-let A = Variable.with({
-  street: VString,
-  state: VString
-})
-class Address2 extends A {
-  another: string
-}
-let a = new Address2()
-let v = new Variable<Date>()
-let v2 = new Variable()
-console.log(v.valueOf().getTime())
-console.log(a.state.put('hi'), a.another + a.street)
 class Address extends Variable<{}> {
-  @reactive street: string
+  @reactive street?: VString
   @reactive state: string
 }
 const Addresses = (VArray.of(Address))
