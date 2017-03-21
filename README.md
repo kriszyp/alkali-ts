@@ -33,6 +33,8 @@ name.put('World')
 'Hi, ' + mc.name -> 'Hi, World'
 ```
 
+The `index.ts` shows more examples of usage.
+
 ### Installation
 `npm install`
 `npm run build`
