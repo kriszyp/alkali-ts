@@ -36,3 +36,6 @@ name.put('World')
 ### Installation
 `npm install`
 `npm run build`
+
+### Babel
+FYI, the same `reactive` decorators can be used with the [Alkali babel plugin](https://github.com/kriszyp/babel-plugin-transform-alkali)
