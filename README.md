@@ -24,7 +24,18 @@ And then any assignments to the reactive properties cause reactive updates in th
 mc.name = 'New Name'
 mc.age = 23
 ```
+This is because the property values themselves (as returned by the getters) are self-contained reactive values. So we can also do:
+```
+let name = mc.name
+mc.name = 'John'
+name.valueOf() -> 'John'
+name.put('World')
+'Hi, ' + mc.name -> 'Hi, World'
+```
 
 ### Installation
 `npm install`
 `npm run build`
+
+### Babel
+FYI, the same `reactive` decorators can be used with the [Alkali babel plugin](https://github.com/kriszyp/babel-plugin-transform-alkali)
